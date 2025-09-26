@@ -1,28 +1,24 @@
-# ConvMd - Office文書変換システム依存パッケージ
-
-# Windows COM API (Office自動化)
-pywin32>=311
+# Office-to-Markdown変換システム - 必須パッケージ
+# Generated from pyproject.toml dependencies
 
 # Office文書処理
-docx2pdf>=0.1.8
+python-docx2pdf>=1.0.2
 openpyxl>=3.1.2
-python-pptx>=1.0.2
+python-pptx>=0.6.21
 reportlab>=4.0.4
 
 # PDF処理
 PyPDF2>=3.0.1
-PyMuPDF>=1.23.0
 
 # ファイル監視
 watchdog>=3.0.0
 
 # Azure OpenAI API
 openai>=1.3.0
-httpx>=0.24.0
 
 # 設定管理とバリデーション
 pydantic>=2.4.0
-PyYAML>=6.0.1
+pyyaml>=6.0.1
 
 # HTTP通信とリトライ機能
 requests>=2.31.0
