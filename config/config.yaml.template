@@ -1,31 +1,101 @@
-# ConvMd - Office文書変換システム設定ファイル
-# このファイルを config.yaml にコピーして編集してください
+# Office-to-Markdown変換システム設定ファイル テンプレート
+# このファイルをconfig.yamlとしてコピーして、実際の値に更新してください
 
+# ======================================
 # フォルダ設定
+# ======================================
 folders:
-  input: "C:\\Temp\\ConvMD\\INPUT"      # 入力フォルダ
-  output: "C:\\Temp\\ConvMD\\OUTPUT"    # 出力フォルダ
-  intermediate: "C:\\Temp\\ConvMD\\TEMP_PDF"  # 中間PDF保存フォルダ
+  input: "./input"                    # 監視対象のInputフォルダパス
+  output: "./output"                  # 変換結果のOutputフォルダパス  
+  intermediate: "./temp"              # 中間ファイル（PDF）の保存フォルダパス
 
-# Azure OpenAI設定
+# ======================================
+# Azure OpenAI API設定
+# ======================================
 azure_openai:
-  endpoint: "https://your-resource.openai.azure.com/"
-  api_key: "your-api-key"
-  deployment_name: "your-deployment"
-  api_version: "2024-02-15-preview"
-  prompt_template_path: "prompts/dify_conversion.txt"
-  verify_ssl: false  # SSL証明書検証の有効/無効
+  endpoint: "https://your-resource.openai.azure.com/"     # Azure OpenAIリソースのエンドポイント
+  api_key: "your-api-key-here"                           # APIキー（環境変数AZURE_OPENAI_API_KEYで上書き可能）
+  deployment_name: "gpt-4"                               # デプロイメント名（環境変数AZURE_OPENAI_DEPLOYMENT_NAMEで上書き可能）
+  api_version: "2023-12-01-preview"                      # API バージョン
+  prompt_template_path: "prompts/dify_conversion.txt"    # DifyのRAG最適化プロンプトテンプレートファイル
+  max_tokens: 4000                                       # 最大トークン数
+  temperature: 0.1                                       # 生成の創造性（0.0-2.0）
+  timeout_seconds: 60                                    # API リクエストタイムアウト秒
+  max_retries: 3                                         # リトライ最大回数  
+  retry_delay_seconds: 1                                 # リトライ間隔秒
 
+# ======================================
 # ログ設定
+# ======================================
 logging:
-  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
-  format: "json"  # json, text
-  file: "logs/converter.log"
-  max_size_mb: 10
-  backup_count: 5
+  level: "INFO"                                          # ログレベル: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: "logs/converter.log"                            # ログファイルパス
+  max_size_mb: 10                                       # ローテーション前の最大ファイルサイズ（MB）
+  backup_count: 5                                       # 保持するログファイル数
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"  # ログフォーマット
+  console_output: true                                  # コンソール出力の有効/無効
 
-# 処理設定
-processing:
-  max_retries: 3
-  timeout_seconds: 300
-  chunk_size: 1000
+# ======================================
+# ファイル処理設定
+# ======================================
+file_processing:
+  supported_extensions:                                 # サポートするOffice文書拡張子
+    - ".docx"                                          # Microsoft Word文書
+    - ".xlsx"                                          # Microsoft Excel文書
+    - ".pptx"                                          # Microsoft PowerPoint文書
+  skip_hidden_files: true                              # 隠しファイルをスキップ
+  duplicate_check: true                                # 重複処理チェックの有効化
+  batch_size: 10                                       # バッチ処理時の一度に処理するファイル数
+  parallel_processing: false                           # 並列処理の有効/無効（実験的機能）
+
+# ======================================
+# 監視設定
+# ======================================
+monitoring:
+  enabled: true                                         # フォルダ監視の有効/無効
+  interval_seconds: 5                                   # 監視間隔（秒）
+  
+# ======================================
+# Dify RAG統合設定 
+# ======================================
+dify:
+  # API接続設定
+  api:
+    base_url: "https://api.dify.ai/v1"                   # Dify APIベースURL（環境変数DIFY_BASE_URLで上書き可能）
+    api_key: "your-dify-api-key"                        # Dify APIキー（環境変数DIFY_API_KEYで設定推奨）
+    dataset_id: "your-dataset-id"                       # Difyデータセット ID（環境変数DIFY_DATASET_IDで設定推奨）
+    timeout: 30                                          # API タイムアウト（秒）
+    max_retries: 3                                       # 最大リトライ回数
+    retry_delay_base: 2                                  # リトライ間隔ベース（秒、指数バックオフ）
+    
+  # 階層チャンク設定  
+  chunking:
+    max_parent_tokens: 1000                              # 親チャンクの最大トークン数
+    max_child_tokens: 400                                # 子チャンクの最大トークン数
+    overlap_ratio: 0.1                                   # チャンクオーバーラップ比率（0.0-0.3）
+    enable_hierarchical: true                            # 階層チャンクの有効化
+    token_model: "cl100k_base"                          # トークン計算に使用するモデル
+    
+  # アップロード設定
+  upload:
+    concurrent_uploads: 3                                # 同時アップロード数
+    validate_before_upload: true                         # アップロード前の検証
+    continue_on_error: false                             # エラー時の処理継続
+    
+  # キャッシュ設定
+  cache:
+    enable_response_cache: true                          # レスポンスキャッシュの有効化
+    cache_ttl_hours: 24                                  # キャッシュ有効期限（時間）
+    max_cache_size_mb: 100                              # 最大キャッシュサイズ（MB）
+    
+  # セキュリティ設定
+  security:
+    enable_ssl_verification: true                        # SSL証明書検証の有効化
+    request_timeout: 30                                  # リクエストタイムアウト（秒）
+    
+  # エラーハンドリング設定
+  error_handling:
+    enable_detailed_logging: true                        # 詳細ログの有効化
+    retry_on_network_error: true                         # ネットワークエラー時のリトライ
+    retry_on_server_error: true                          # サーバーエラー時のリトライ
+    max_error_history: 100                               # エラー履歴の最大保持数
