@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  office-converter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: convmd-dify-integration
+    environment:
+      # Azure OpenAI設定
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - AZURE_OPENAI_DEPLOYMENT_NAME=${AZURE_OPENAI_DEPLOYMENT_NAME}
+      
+      # Dify統合設定  
+      - DIFY_API_KEY=${DIFY_API_KEY}
+      - DIFY_DATASET_ID=${DIFY_DATASET_ID}
+      - DIFY_BASE_URL=${DIFY_BASE_URL:-https://api.dify.ai/v1}
+      
+      # ログ設定
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      
+    volumes:
+      - ./input:/app/input:ro
+      - ./output:/app/output
+      - ./temp:/app/temp  
+      - ./logs:/app/logs
+      - ./config:/app/config:ro
+      - ./test_reports:/app/test_reports
+      
+    restart: unless-stopped
+    
+    healthcheck:
+      test: ["CMD", "python", "-c", "from src.office_converter.services.dify_api_client import DifyAPIClient; print('Health OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    
+    networks:
+      - convmd-network
+
+  # 開発用サービス
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: convmd-dev
+    environment:
+      # Azure OpenAI設定
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - AZURE_OPENAI_DEPLOYMENT_NAME=${AZURE_OPENAI_DEPLOYMENT_NAME}
+      
+      # Dify統合設定
+      - DIFY_API_KEY=${DIFY_API_KEY}  
+      - DIFY_DATASET_ID=${DIFY_DATASET_ID}
+      - DIFY_BASE_URL=${DIFY_BASE_URL:-https://api.dify.ai/v1}
+      
+      # 開発設定
+      - LOG_LEVEL=DEBUG
+      - PYTHONUNBUFFERED=1
+      
+    volumes:
+      - .:/app
+      - /app/src/office_converter.egg-info  # 除外
+      
+    command: ["python", "src/main.py", "--dev"]
+    
+    networks:
+      - convmd-network
+      
+    profiles:
+      - dev
+
+  # テスト実行サービス  
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: convmd-test
+    environment:
+      - DIFY_API_KEY=${DIFY_API_KEY}
+      - DIFY_DATASET_ID=${DIFY_DATASET_ID}  
+      - DIFY_BASE_URL=${DIFY_BASE_URL:-https://api.dify.ai/v1}
+      
+    volumes:
+      - .:/app
+      - ./test_reports:/app/test_reports
+      
+    command: ["python", "run_e2e_tests.py", "--verbose"]
+    
+    networks:
+      - convmd-network
+      
+    profiles:
+      - test
+
+networks:
+  convmd-network:
+    driver: bridge
