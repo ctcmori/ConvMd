@@ -1,0 +1,31 @@
+# ConvMd - Office文書変換システム設定ファイル
+# このファイルを config.yaml にコピーして編集してください
+
+# フォルダ設定
+folders:
+  input: "C:\\Temp\\ConvMD\\INPUT"      # 入力フォルダ
+  output: "C:\\Temp\\ConvMD\\OUTPUT"    # 出力フォルダ
+  intermediate: "C:\\Temp\\ConvMD\\TEMP_PDF"  # 中間PDF保存フォルダ
+
+# Azure OpenAI設定
+azure_openai:
+  endpoint: "https://your-resource.openai.azure.com/"
+  api_key: "your-api-key"
+  deployment_name: "your-deployment"
+  api_version: "2024-02-15-preview"
+  prompt_template_path: "prompts/dify_conversion.txt"
+  verify_ssl: false  # SSL証明書検証の有効/無効
+
+# ログ設定
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  format: "json"  # json, text
+  file: "logs/converter.log"
+  max_size_mb: 10
+  backup_count: 5
+
+# 処理設定
+processing:
+  max_retries: 3
+  timeout_seconds: 300
+  chunk_size: 1000
