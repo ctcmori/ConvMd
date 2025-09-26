@@ -20,6 +20,8 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -43,6 +45,7 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *.cover
+*.py,cover
 .hypothesis/
 .pytest_cache/
 
@@ -54,6 +57,7 @@ coverage.xml
 *.log
 local_settings.py
 db.sqlite3
+db.sqlite3-journal
 
 # Flask stuff:
 instance/
@@ -78,8 +82,15 @@ ipython_config.py
 # pyenv
 .python-version
 
-# celery beat schedule file
+# pipenv
+Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
 celerybeat-schedule
+celerybeat.pid
 
 # SageMath parsed files
 *.sage.py
@@ -111,21 +122,87 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Project specific
-config/config.yaml
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Application specific
 logs/
-*.pdf
-*.docx
-*.xlsx
-*.pptx
-*.doc
-*.xls
-*.ppt
-input_documents/
-output/
+*.log
 temp/
-.serena/
-.spec-workflow/
-htmlcov/
+tmp/
+cache/
+*.cache
+
+# Configuration files (contain sensitive data)
+config/config.yaml
+.env.local
+.env.production
+*.key
+*.pem
+*.crt
+
+# Docker
+.dockerignore
+
+# Test files and reports
+test_reports/
 .coverage
-coverage.xml
+htmlcov/
+.pytest_cache/
+*.xml
+
+# Office and document files (temporary/test files)
+~$*
+*.tmp
+*.temp
+
+# Dify integration specific
+dify_cache/
+.dify_config
+dify_temp/
+knowledge_base_cache/
+
+# Application data
+input_documents/*.xlsx
+input_documents/*.docx
+input_documents/*.pdf
+!input_documents/.gitkeep
+
+# Generated markdown files
+output_markdown/
+*.md.bak
+
+# Performance and profiling
+*.prof
+*.pstat
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux specific
+*~
+
+# macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
