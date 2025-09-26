@@ -1,35 +1,52 @@
-# Office-to-Markdown変換システム - 必須パッケージ
-# Generated from pyproject.toml dependencies
-
-# Office文書処理
-python-docx2pdf>=1.0.2
+# Core dependencies for Office to Markdown conversion
+requests>=2.31.0
+PyYAML>=6.0.1
 openpyxl>=3.1.2
-python-pptx>=0.6.21
+python-docx>=0.8.11
 reportlab>=4.0.4
-
-# PDF処理
-PyPDF2>=3.0.1
-
-# ファイル監視
+pypdf>=3.15.0
 watchdog>=3.0.0
 
-# Azure OpenAI API
-openai>=1.3.0
+# Azure OpenAI integration
+openai>=1.0.0
 
-# 設定管理とバリデーション
-pydantic>=2.4.0
-pyyaml>=6.0.1
+# Dify RAG integration
+tiktoken>=0.5.1           # Token counting for chunking
+tenacity>=8.2.3           # Retry mechanisms with exponential backoff
+psutil>=5.9.5             # System monitoring and optimization
 
-# HTTP通信とリトライ機能
-requests>=2.31.0
-tenacity>=8.2.0
+# Development and testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.1
+pytest-asyncio>=0.21.1
+requests-mock>=1.11.0
+coverage>=7.3.0
 
-# 開発・テスト用パッケージ (オプション)
-# pytest>=7.4.0
-# pytest-mock>=3.11.1
-# pytest-cov>=4.1.0
-# black>=23.7.0
-# isort>=5.12.0
-# mypy>=1.5.0
-# flake8>=6.0.0
-# pre-commit>=3.3.0
+# Code quality and formatting  
+black>=23.7.0
+isort>=5.12.0
+mypy>=1.5.0
+pre-commit>=3.3.3
+
+# Performance monitoring and optimization
+cachetools>=5.3.1         # Response caching
+urllib3>=2.0.4            # HTTP connection pooling
+
+# Data processing and validation
+pydantic>=2.1.0           # Data validation and serialization
+dataclasses-json>=0.6.0   # JSON serialization for dataclasses
+
+# Async support (optional for future enhancements)
+aiofiles>=23.1.0
+asyncio>=3.4.3
+
+# Utilities
+pathlib2>=2.3.7          # Enhanced path handling
+python-dateutil>=2.8.2   # Date/time utilities
+colorama>=0.4.6           # Colored console output
+rich>=13.5.0              # Rich console formatting
+
+# Security and validation
+cryptography>=41.0.0      # Secure operations
+certifi>=2023.7.22        # SSL certificate validation
