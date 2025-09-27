@@ -1,0 +1,100 @@
+# Office-to-Markdown変換システム本番設定ファイル
+# 本番環境用に最適化された設定
+
+# ======================================
+# フォルダ設定
+# ======================================
+folders:
+  input: "C:\\Temp\\ConvMD\\INPUT"                    # 監視対象のInputフォルダパス
+  output: "C:\\Temp\\ConvMD\\OUTPUT"                  # 変換結果のOutputフォルダパス
+  intermediate: "C:\\Temp\\ConvMD\\TEMP_PDF"          # 中間ファイル（PDF）の保存フォルダパス
+
+# ======================================
+# Azure OpenAI API設定
+# ======================================
+azure_openai:
+  endpoint: "YOUR_AZURE_OPENAI_ENDPOINT"                       # Azure OpenAIリソースのベースエンドポイント（環境変数AZURE_OPENAI_ENDPOINT推奨）
+  api_key: "YOUR_AZURE_OPENAI_API_KEY"                        # APIキー（環境変数AZURE_OPENAI_API_KEYで設定してください）
+  deployment_name: "YOUR_DEPLOYMENT_NAME"                     # デプロイメント名（環境変数AZURE_OPENAI_DEPLOYMENT_NAMEで設定してください）
+  api_version: "2024-02-15-preview"                      # API バージョン
+  prompt_template_path: "prompts/dify_conversion.txt"  # DifyのRAG最適化プロンプトテンプレートファイル
+  max_tokens: 4000                                       # 最大トークン数
+  temperature: 0.1                                       # 生成の創造性（0.0-2.0）
+  timeout_seconds: 120                                   # API リクエストタイムアウト秒（本番では長めに設定）
+  max_retries: 5                                         # リトライ最大回数（本番では多めに設定）
+  retry_delay_seconds: 2                                 # リトライ間隔秒（本番では長めに設定）
+
+# ======================================
+# ログ設定（本番環境用）
+# ======================================
+logging:
+  level: "INFO"                                         # 本番環境：INFOレベル（DEBUGは無効）
+  file: "logs/converter.log"                           # ログファイルパス
+  max_size_mb: 50                                      # ローテーション前の最大ファイルサイズ（本番では大きめ）
+  backup_count: 10                                     # 保持するログファイル数（本番では多め）
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"  # ログフォーマット
+  console_output: false                                # 本番環境：コンソール出力無効（ファイルログのみ）
+
+# ======================================
+# ファイル処理設定（本番環境用）
+# ======================================
+file_processing:
+  supported_extensions:                                # サポートするOffice文書拡張子
+    - ".docx"                                         # Microsoft Word文書
+    - ".xlsx"                                         # Microsoft Excel文書
+    - ".pptx"                                         # Microsoft PowerPoint文書
+  skip_hidden_files: true                             # 隠しファイルをスキップ
+  duplicate_check: true                               # 重複処理チェックの有効化
+  batch_size: 20                                      # バッチ処理時の一度に処理するファイル数（本番では多め）
+  parallel_processing: false                          # 並列処理の有効/無効（安定性重視で無効）
+
+# ======================================  
+# ファイル監視設定（本番環境用）
+# ======================================
+watcher:
+  enabled: true                                         # ファイル監視機能の有効/無効
+  poll_interval_seconds: 1                             # フォルダ監視のポーリング間隔秒（本番では短く）
+  ignore_patterns:                                      # 無視するファイルパターン
+    - "*.tmp"                                          # 一時ファイル
+    - "~*"                                             # Officeの一時ファイル
+    - ".DS_Store"                                      # macOSシステムファイル
+    - "Thumbs.db"                                      # Windowsサムネイルファイル
+
+# ======================================  
+# Dify統合設定（本番環境用）
+# ======================================
+dify:
+  base_url: "YOUR_DIFY_BASE_URL"                       # Dify APIベースURL（環境変数DIFY_BASE_URLで設定してください）
+  api_key: "YOUR_DIFY_API_KEY"                         # Dify APIキー（環境変数DIFY_API_KEYで設定してください）
+  dataset_id: "YOUR_DIFY_DATASET_ID"                   # DifyデータセットID（環境変数DIFY_DATASET_IDで設定してください）
+  timeout: 120                                         # Dify APIリクエストタイムアウト（本番では長め）
+  max_retries: 5                                       # Dify APIリトライ最大回数（本番では多め）
+  retry_delay: 3.0                                     # Dify APIリトライ間隔秒（本番では長め）
+
+# ======================================
+# パフォーマンス最適化設定（本番環境用）
+# ======================================
+optimization:
+  enable_monitoring: true                              # パフォーマンス監視の有効化
+  monitoring_interval_seconds: 10.0                   # 監視間隔（本番では長め）
+  cpu_threshold: 70.0                                 # CPU使用率の閾値（本番では低め）
+  memory_threshold: 80.0                              # メモリ使用率の閾値（本番では低め）
+  disk_threshold: 85.0                                # ディスク使用率の閾値（本番では低め）
+  max_history_size: 2000                              # 履歴の最大サイズ（本番では多め）
+  enable_auto_optimization: false                     # 自動最適化の無効化（安定性重視）
+  performance_profiling: false                        # パフォーマンスプロファイリング無効（本番では不要）
+  export_metrics: true                                # メトリクス出力の有効化（運用監視用）
+  metrics_export_path: "metrics/performance_data.json" # メトリクス出力パス
+
+# ======================================
+# セキュリティ設定（本番環境用）
+# ======================================
+security:
+  enable_api_key_validation: true                      # APIキーの妥当性検証（必須）
+  api_key_min_length: 32                              # APIキーの最小長
+  enable_request_logging: true                        # リクエストログの有効化（監査用）
+  mask_sensitive_data: true                           # 機密データのマスキング（セキュリティ）
+  enable_rate_limiting: true                          # レート制限の有効化（DoS対策）
+  max_requests_per_minute: 60                         # 1分間あたりの最大リクエスト数（安定性重視）
+  enable_ssl_verification: true                       # SSL証明書の検証（セキュリティ）
+  max_file_size_mb: 50                               # 最大ファイルサイズ（本番では制限）
